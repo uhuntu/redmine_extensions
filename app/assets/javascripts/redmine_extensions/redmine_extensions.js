@@ -83,6 +83,7 @@ EasyGem.schedule.require(function () {
       render_item: function (ul, item) {
         return $("<li>")
             .data("item.autocomplete", item)
+            .attr('item_id', item.id)
             .text(item.label)
             .appendTo(ul);
       },

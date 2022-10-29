@@ -1,14 +1,18 @@
 # Redmine Extensions
+
+[![pipeline status](https://git.easy.cz/redmine/redmine_extensions_gem/badges/master/pipeline.svg)](https://git.easy.cz/redmine/redmine_extensions_gem/-/commits/master)
+
+[![Latest Release](https://git.easy.cz/redmine/redmine_extensions_gem/-/badges/release.svg)](https://git.easy.cz/redmine/redmine_extensions_gem/-/releases)
+
 [![Gem Version](https://badge.fury.io/rb/redmine_extensions.svg)](http://badge.fury.io/rb/redmine_extensions)
-[![Build Status](https://travis-ci.org/easyredmine/redmine_extensions.svg?branch=master)](https://travis-ci.org/easyredmine/redmine_extensions)
 
 
-⚠️ This gem working only with Redmine 4.x
+⚠️ This gem currently not working with Redmine at all.
 
 ---
 This gem provides an extended funcionality for a Redmine project
 
-## Provided funcionalities
+## Provided functionalities
 * EasySetting - per project settings
 * Redmine Plugin Generator
 * Redmine Entity Generator

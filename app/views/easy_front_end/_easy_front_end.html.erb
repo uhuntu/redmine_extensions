@@ -1,22 +1,4 @@
 <% content_for :header_tags do %>
-  <%=
-    if params['combine_by_pipeline'].nil?
-      if Rails.env.development? && ENV['DART'] == '1'
-        javascript_include_tag('dart/localhost', plugin: plugin, defer: true)
-      else
-        javascript_include_tag("#{plugin}.dart", defer: true)
-      end
-    else
-      if params['combine_by_pipeline'] == 'false'
-        #javascript_include_tag('dart/debug', plugin: plugin, defer: true)
-        if ENV['DART'] == '1'
-          javascript_include_tag('dart/localhost', plugin: plugin, defer: true)
-        end
-      else
-        javascript_include_tag("#{plugin}.dart", defer: true)
-      end
-    end
-  %>
 
   <%
     standard_lang_files = [
@@ -87,6 +69,6 @@
 
   %>
   <script>
-    window.frontEndCommons = "<%= escape_javascript(front_end_commons.to_json.html_safe) %>";
+    window.frontEndCommons = "<%= j(front_end_commons.to_json.html_safe) %>";
   </script>
 <% end %>

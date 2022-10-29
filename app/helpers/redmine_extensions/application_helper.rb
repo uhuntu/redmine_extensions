@@ -14,7 +14,7 @@ module RedmineExtensions
 
     # -------= Rendering and presenting methods =-------
 
-    def present(model, options={}, &block)
+    def present(model, options = {}, &block)
       if model.is_a?(RedmineExtensions::BasePresenter)
         presenter = model.update_options(options.merge(view_context: self))
       else
@@ -31,11 +31,12 @@ module RedmineExtensions
 
     # hide elements for issues and users
     def detect_hide_elements(uniq_id, user = nil, default = true)
-      return ''.html_safe if uniq_id.blank?
-      return 'style="display:none"'.html_safe if !toggle_button_expanded?(uniq_id, user, default)
+      return if uniq_id.blank?
+
+      'style="display:none"'.html_safe if !toggle_button_expanded?(uniq_id, user, default)
     end
 
-    def url_to_entity(entity, options={})
+    def url_to_entity(entity, options = {})
       m = "url_to_#{entity.class.name.underscore}".to_sym
       if respond_to?(m)
         send(m, entity, options)
@@ -87,7 +88,7 @@ module RedmineExtensions
       render(:partial => 'easy_entity_assignments/assignments_container', :locals => {
         :entity => entity,
         :query => query, :project => project,
-        :entities => entities, :entities_count => entities_count, :options => options})
+        :entities => entities, :entities_count => entities_count, :options => options })
     end
 
     def entity_css_icon(entity_or_entity_class)
@@ -116,7 +117,7 @@ module RedmineExtensions
         else
           content_or_options_with_block
         end
-      html_options.reverse_merge!({type:'application/javascript'})
+      html_options.reverse_merge!({ type: 'application/javascript' })
       priority = html_options.delete(:priority) || 0
       content = "  EasyGem.schedule.late(function(){#{content}  }, #{priority});"
 
@@ -139,27 +140,16 @@ module RedmineExtensions
       javascript_tag content.html_safe, html_options
     end
 
-    def get_jasmine_tags
-      tags = params[:jasmine]
-      return [] if tags == 'true'
-      if tags.is_a?(String)
-        [tags.to_sym]
-      elsif tags.is_a?(Array)
-        tags.map &:to_sym
-      else
-        []
-      end
-    end
-
     def easy_avatar_url(user = nil)
+      return avatar_url(user) if respond_to?(:avatar_url)
+
       user ||= User.current
-      result = if Setting.gravatar_enabled?
-        options = {:ssl => (request && request.ssl?), :default => Setting.gravatar_default}
-        email = nil
-        if user.respond_to?(:mail)
-          email = user.mail
+      if Setting.gravatar_enabled?
+        options = { ssl: (request&.ssl?), default: Setting.gravatar_default }
+        email = if user.respond_to?(:mail)
+          user.mail
         elsif user.to_s =~ %r{<(.+?)>}
-          email = $1
+          $1
         end
         email ? gravatar_url(email, options) : ''
       elsif user.easy_avatar_url.present?
@@ -167,7 +157,6 @@ module RedmineExtensions
       elsif user.respond_to?(:easy_avatar) && (av = user.easy_avatar).present? && (img_url = av.image.url(:small))
         get_easy_absolute_uri_for(img_url).to_s
       end
-      result
     end
 
     # ==== Options
@@ -180,13 +169,14 @@ module RedmineExtensions
     # * <tt>remember: false</tt> - This disable remember function of toggle container
     # ** Aliases for this options are: ajax_call
     #
-    def render_module_easy_box(id, heading, options = {}, &block) # with fallback to old
+    def render_module_easy_box(id, heading, options = {}, &block)
+      # with fallback to old
       options[:toggle] = true unless options.key?(:toggle)
       options[:remember] = options.delete(:ajax_call) if options.key?(:ajax_call)
       options[:collapsible] = !options.delete(:no_expander) if options.key?(:no_expander)
 
       renderer = EasyBoxRenderer.new(self, id, heading, options)
-      renderer.content = capture {yield renderer}
+      renderer.content = capture { yield renderer }
 
       renderer.render
     end
@@ -247,8 +237,9 @@ module RedmineExtensions
       end
 
       def render
-        view.render({partial: 'common/collapsible_module_layout', locals: {renderer: self, content: content}} )
+        view.render({ partial: 'common/collapsible_module_layout', locals: { renderer: self, content: content } })
       end
+
       private
 
       def css_classes
@@ -257,9 +248,9 @@ module RedmineExtensions
           @css_classes = css_class
         else
           @css_classes = {
-              container: css_class,
-              heading: css_class,
-              content: css_class
+            container: css_class,
+            heading: css_class,
+            content: css_class
           }
         end
       end
@@ -287,7 +278,7 @@ module RedmineExtensions
     # * +rootElement+ - Has sence only if jsonpath is used for available values. It tells if the json response has values wrapped under root element.
     #                     For response like <tt>{projects: [[<name>, <id>], [<name2>, <id2>]]}</tt> user option <tt>rootElement: 'projects'</tt>
     def autocomplete_field_tag(name, jsonpath_or_array, selected_values, options = {})
-      options.reverse_merge!({select_first_value: false, load_immediately: false, preload: true, multiple: true, combo: false})
+      options.reverse_merge!(select_first_value: false, load_immediately: false, preload: true, multiple: true, combo: false)
       options[:id] ||= sanitize_to_id(name)
 
       selected_values ||= []
@@ -298,9 +289,9 @@ module RedmineExtensions
         source = "'#{jsonpath_or_array}'"
       end
 
-      content_tag(:span, :class => 'easy-multiselect-tag-container') do
-        search_field_tag('', '', (options[:html_options] || {}).merge(id: options[:id])) +
-          late_javascript_tag("$('##{options[:id]}').easymultiselect({multiple: #{options[:multiple]}, rootElement: #{options[:rootElement].to_json}, inputName: '#{name}', preload: #{options[:preload]}, combo: #{options[:combo]}, source: #{source}, selected: #{selected_values.to_json}, select_first_value: #{options[:select_first_value]}, load_immediately: #{options[:load_immediately]}, autocomplete_options: #{(options[:jquery_auto_complete_options]||{}).to_json} });")
+      content_tag(:span, class: 'easy-multiselect-tag-container', data: { cy: "container_old_autocomplete--#{name}" }) do
+        search_field_tag('', '', (options[:html_options] || {}).merge(id: options[:id], data: { cy: "search_old_autocomplete--#{name}" })) +
+          late_javascript_tag("$('##{options[:id]}').easymultiselect({multiple: #{options[:multiple]}, rootElement: #{options[:rootElement].to_json}, inputName: '#{name}', preload: #{options[:preload]}, combo: #{options[:combo]}, source: #{source}, selected: #{selected_values.to_json}, select_first_value: #{options[:select_first_value]}, load_immediately: #{options[:load_immediately]}, autocomplete_options: #{(options[:jquery_auto_complete_options] || {}).to_json} });")
       end
     end
 
@@ -323,7 +314,7 @@ module RedmineExtensions
     #           <input type="hidden" name="issue[tag_ids][]" value="#{@issue.tag_ids.second}" />
     #         ...(wraping service tags end)
     #        </span>
-    def autocomplete_field(object_name, method, choices, options={}, html_options={})
+    def autocomplete_field(object_name, method, choices, options = {}, html_options = {})
       Tags::AutocompleteField.new(object_name, method, self, choices, options, html_options).render
     end
 

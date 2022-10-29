@@ -36,10 +36,12 @@
             if (!entity.id || entity === "" || this.entities[entity.id]) {
                 return null;
             }
+            const dataCyInputName = this.options.inputNames.replaceAll("[", "").replaceAll("]", "");
 
             entity.element = $("<span/>")
                 .text(entity.name)
                 .addClass(entity.className || this.options.className)
+                .attr("data-cy", `card__${dataCyInputName}--id_${entity.id}`)
                 .appendTo(this.element)
                 .after(" ");
 
@@ -53,6 +55,7 @@
                 .html('&nbsp;')
                 .addClass("icon icon-del")
                 .appendTo(entity.element)
+                .attr("data-cy", `button__delete--${dataCyInputName}_id_${entity.id}`)
                 .data("entity-id", entity.id)
                 .click(function () {
                     self.removeEntity($(this).data("entity-id"));

@@ -47,14 +47,14 @@ module RedmineExtensions
     # =>          :after => 'Project'
     # =>          :last
     # =>          :if => Proc.new{ Object.const_defined?(:EasyBudgetSheetQuery) }
-    def self.register_patch(original_klasses_to_patch, patching_module, options={})
+    def self.register_patch(original_klasses_to_patch, patching_module, options = {})
       return if @@reloading_code
 
       options ||= {}
 
       begin
         const = patching_module.constantize
-        @@patches_locations[patching_module] = const.methods(false).map{|m| const.method(m) }.first.source_location.first
+        @@patches_locations[patching_module] = const.methods(false).map { |m| const.method(m) }.first.source_location.first
       rescue
         # [0] is register_*_patch
         from_location = caller_locations(2..2).first
@@ -71,7 +71,7 @@ module RedmineExtensions
         raise ArgumentError, 'EasyPatchManager->register_patch: The \'original_klass_to_patch\' have to be a string or array of strings!'
       end
 
-      raise ArgumentError, "EasyPatchManager->register_patch: The \'patching_module\' (#{patching_module}) already exists!" if EasyPatch.all_patching_modules.include?( patching_module )
+      raise ArgumentError, "EasyPatchManager->register_patch: The \'patching_module\' (#{patching_module}) already exists!" if EasyPatch.all_patching_modules.include?(patching_module)
 
       if options[:section]
         section = options.delete(:section).to_sym
@@ -81,47 +81,47 @@ module RedmineExtensions
       raise ArgumentError, "EasyPatchManager->register_patch: The section (#{section}) must be one of x#{@@registered_patches.keys.join(', ')}x " unless @@registered_patches.key?(section)
 
       original_klasses_to_patch.each do |original_klass_to_patch|
-        pcollection = @@registered_patches[section].move_and_get_or_insert( original_klass_to_patch, options )
+        pcollection = @@registered_patches[section].move_and_get_or_insert(original_klass_to_patch, options)
         pcollection << EasyPatch.new(original_klass_to_patch, patching_module, options)
       end
     end
+
     private_class_method :register_patch
 
-
-    def self.register_ruby_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :ruby}.merge(options))
+    def self.register_ruby_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { section: :ruby }.merge(options))
     end
 
-    def self.register_rails_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :rails}.merge(options))
+    def self.register_rails_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { section: :rails }.merge(options))
     end
 
-    def self.register_redmine_plugin_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :redmine_plugins}.merge(options))
+    def self.register_redmine_plugin_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { :section => :redmine_plugins }.merge(options))
     end
 
-    def self.register_other_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :others}.merge(options))
+    def self.register_other_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { :section => :others }.merge(options))
     end
 
-    def self.register_concern_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :concerns}.merge(options))
+    def self.register_concern_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { :section => :concerns }.merge(options))
     end
 
-    def self.register_controller_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :controllers}.merge(options))
+    def self.register_controller_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { :section => :controllers }.merge(options))
     end
 
-    def self.register_helper_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :helpers}.merge(options))
+    def self.register_helper_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { :section => :helpers }.merge(options))
     end
 
-    def self.register_model_patch(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :models}.merge(options))
+    def self.register_model_patch(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { :section => :models }.merge(options))
     end
 
-    def self.register_patch_to_be_first(original_klass_to_patch, patching_module, options={})
-      register_patch(original_klass_to_patch, patching_module, {:section => :force_first}.merge(options))
+    def self.register_patch_to_be_first(original_klass_to_patch, patching_module, options = {})
+      register_patch(original_klass_to_patch, patching_module, { :section => :force_first }.merge(options))
     end
 
     def self.register_easy_page_helper(*helper_or_helpers_klass_name)
@@ -208,28 +208,28 @@ module RedmineExtensions
       end
 
       def [](name)
-        pcollection = @patches_collections.detect{|patch_col| patch_col.name == name }
+        pcollection = @patches_collections.detect { |patch_col| patch_col.name == name }
       end
 
       def include_patch?(name)
-        !!@patches_collections.detect{|patch_col| patch_col.name == name }
+        !!@patches_collections.detect { |patch_col| patch_col.name == name }
       end
 
-      def move_and_get_or_insert( name, options )
-        pcollection = @patches_collections.detect{|patch_col| patch_col.name == name }
-        founded_order = find_order( options )
+      def move_and_get_or_insert(name, options)
+        pcollection = @patches_collections.detect { |patch_col| patch_col.name == name }
+        founded_order = find_order(options)
         if pcollection
           if founded_order
             pcollection.order = founded_order
             update_order_by(pcollection)
           end
         else
-          pcollection = insert( name, founded_order )
+          pcollection = insert(name, founded_order)
         end
         pcollection
       end
 
-      def find_order( options )
+      def find_order(options)
         if options.delete(:first)
           return 1
         elsif before = options.delete(:before)
@@ -240,7 +240,7 @@ module RedmineExtensions
               actual = nil
               before_patch = self[before_class_name]
               actual = before_patch.order if before_patch
-              if actual && ( !min || actual < min )
+              if actual && (!min || actual < min)
                 min = actual
               end
             end
@@ -277,7 +277,7 @@ module RedmineExtensions
 
       private
 
-      def push_back( collection )
+      def push_back(collection)
         # => ambitious, if it is private method...
         # raise ArgumentError, "Section already contains a collection #{collection.name}" if @patches_collections.detect{ |coll| collection.name == coll.name }
         @patches_collections << collection
@@ -287,16 +287,16 @@ module RedmineExtensions
         @last_order += 1
       end
 
-      def insert( name, order = nil )
+      def insert(name, order = nil)
         final_order = order || last_order
-        collection = EasyPatchesCollection.new( name, final_order )
-        push_back( collection )
-        update_order_by( collection ) if order
+        collection = EasyPatchesCollection.new(name, final_order)
+        push_back(collection)
+        update_order_by(collection) if order
         collection
       end
 
-      def update_order_by( collection )
-        @patches_collections.select {|patch_coll| ( patch_coll.name != collection.name ) && ( patch_coll.order >= collection.order ) }.each do |col|
+      def update_order_by(collection)
+        @patches_collections.select { |patch_coll| (patch_coll.name != collection.name) && (patch_coll.order >= collection.order) }.each do |col|
           col.order = col.order + 1
         end
         @patches_collections.sort!
@@ -347,7 +347,6 @@ module RedmineExtensions
 
     end
 
-
     class EasyPatch
 
       def self.all_patching_modules
@@ -374,9 +373,7 @@ module RedmineExtensions
       end
 
       def apply_patch
-        if (cond = @options[:if]) && cond.respond_to?(:call)
-          return unless cond.call
-        end
+        return if (cond = @options[:if]) && cond.respond_to?(:call) && !cond.call
 
         pm_klass = easy_constantize(patching_module)
         # pm_klass.class_eval { unloadable }
@@ -392,10 +389,13 @@ module RedmineExtensions
             oktp_klass.include pm_klass
           end
         end
+      rescue NameError => e
+        patch_location = Module.const_source_location(patching_module)
+        raise NameError, "#{e.message} in #{patch_location}"
       end
 
       def easy_constantize(name)
-        const = name.constantize
+        name.constantize
       rescue NameError
         if RedmineExtensions::PatchManager.patches_locations.has_key?(name)
           RedmineExtensions::PatchManager.with_reloading_code do

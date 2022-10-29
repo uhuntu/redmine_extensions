@@ -3,23 +3,25 @@ window.EasyToggler = new function() {
   // Example:
   // localStorage # => {"easy-toggle-state": {myDiv: 0, history: 1}} # where myDiv is by default hidden, and now will be shown as visible and history is vice versa
 
-  var storage = JSON.parse(localStorage.getItem('easy-toggle-state') || "{}");
+  const storage = JSON.parse(localStorage.getItem("easy-toggle-state") || "{}");
 
-  var save = function() {
-    localStorage.setItem('easy-toggle-state', JSON.stringify(storage));
+  const save = function() {
+    localStorage.setItem("easy-toggle-state", JSON.stringify(storage));
     return storage;
   };
 
-  var isHidden = function(el) {
-    return (el && el.style.display === 'none')
+  const isHidden = function (el) {
+    if (!el) return false;
+    const computedStyle = window.getComputedStyle(el);
+    return computedStyle.display === "none";
   };
 
-  var toggle = function(el) {
-    var parent = el.parentNode;
+  const toggle = function(el) {
+    const parent = el.parentNode;
 
     parent.classList.toggle("collapsed");
 
-    el.style.display = isHidden(el) ? 'block' : 'none';
+    el.style.display = isHidden(el) ? "block" : "none";
     el.id && !!parent.dataset.toggle && save();
     $( document ).trigger( "erui_interface_change_vertical" ); // <> !#@!
     return el;
@@ -30,22 +32,16 @@ window.EasyToggler = new function() {
     if (event && event.target.tagName === "A")
       return;
 
-    var el = (typeof(id_or_el) === "object") ? id_or_el : document.getElementById(id_or_el);
-    var id = el.id;
-    if (id) {
-      if (!!storage[id]) {
-        delete storage[id];
-      } else {
-        storage[id] = isHidden(el) ? 0 : 1;
-      }
-    }
+    const el = (typeof(id_or_el) === "object") ? id_or_el : document.getElementById(id_or_el);
+    const id = el.id;
+    if (id) storage[id] = isHidden(el) ? 0 : 1;
     toggle(el);
   };
 
   this.ensureToggle = function() {
-    var list = document.querySelectorAll('*[data-toggle]');
-    for (var i = 0; i < list.length; ++i) {
-      var item = list.item(i);
+    const list = document.querySelectorAll("*[data-toggle]");
+    for (let i = 0; i < list.length; ++i) {
+      const item = list.item(i);
       window.EasyToggler.ensureToggleItem(item);
     }
     return this;
@@ -54,11 +50,12 @@ window.EasyToggler = new function() {
   /**
   * @param {HTMLElement} item
   */
-  this.ensureToggleItem = function(item) {
-    var container = document.getElementById(item.dataset.toggle);
-    if (!!storage[item.dataset.toggle]) {
-      toggle(container);
-    }
+  this.ensureToggleItem = function (item) {
+    if (storage[item.dataset.toggle] == null) return;
+    const container = document.getElementById(item.dataset.toggle);
+    const containerState = isHidden(container);
+    const savedContainerState = !!storage[item.dataset.toggle];
+    if (containerState !== savedContainerState) toggle(container);
     return this;
   };
 };

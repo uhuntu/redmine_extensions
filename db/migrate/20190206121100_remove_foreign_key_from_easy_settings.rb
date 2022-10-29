@@ -1,4 +1,4 @@
-class RemoveForeignKeyFromEasySettings < RedmineExtensions::Migration
+class RemoveForeignKeyFromEasySettings < ActiveRecord::Migration[4.2]
   def up
     begin
       remove_foreign_key :easy_settings, :projects
