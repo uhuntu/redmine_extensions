@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "redmine_extensions/version"
 
 Gem::Specification.new do |spec|
-  spec.name        = "redmine_extensions_hunt"
+  spec.name        = "tes_redmine_extensions"
   spec.version     = RedmineExtensions::VERSION
   spec.authors     = ["Easy Software Ltd and Hunt"]
   spec.email       = ["hunt.lin@tes-tec.com"]
