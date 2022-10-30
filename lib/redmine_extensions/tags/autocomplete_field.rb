@@ -1,6 +1,6 @@
 require 'action_view/helpers/tags/placeholderable'
 
-module RedmineExtensions
+module TesRedmineExtensions
   module Tags
     class AutocompleteField < ActionView::Helpers::Tags::Base
       include ActionView::Helpers::Tags::Placeholderable

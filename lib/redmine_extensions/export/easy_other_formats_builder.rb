@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module Export
     class EasyOtherFormatsBuilder
       def initialize(view)

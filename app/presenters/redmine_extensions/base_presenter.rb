@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   class BasePresenter < SimpleDelegator
     attr_reader :model, :options
 

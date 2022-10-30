@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   class EasySettingPresenter < BasePresenter
 
     attr_accessor :project_id, :plugin
@@ -8,7 +8,7 @@ module RedmineExtensions
     end
 
     def initialize(settings_params={}, project = nil)
-      ActiveSupport::Deprecation.warn('RedmineExtensions::EasySettingPresenter is deprecated in favor of EasySettings::ParamsWrapper.')
+      ActiveSupport::Deprecation.warn('TesRedmineExtensions::EasySettingPresenter is deprecated in favor of EasySettings::ParamsWrapper.')
 
       @settings = settings_params || {}
       @settings = @settings.dup.symbolize_keys

@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module RailsPatches
     module ActiveRecord
 

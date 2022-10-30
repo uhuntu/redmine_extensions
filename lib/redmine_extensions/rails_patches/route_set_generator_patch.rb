@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module RailsPatches
     module RouteSetGeneratorPatch
       def use_relative_controller!

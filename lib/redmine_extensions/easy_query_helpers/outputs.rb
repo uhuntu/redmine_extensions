@@ -1,11 +1,11 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module EasyQueryHelpers
     # ----- OUTPUTS HELPER CLASS ----
     class Outputs
       include Enumerable
 
       def initialize(presenter, view_context = nil)
-        if presenter.is_a?(RedmineExtensions::BasePresenter)
+        if presenter.is_a?(TesRedmineExtensions::BasePresenter)
           @presenter = presenter
           @query = @presenter.model
         else
@@ -19,7 +19,7 @@ module RedmineExtensions
       end
 
       def outputs
-        @outputs ||= enabled_outputs.map{|o| RedmineExtensions::QueryOutput.output_klass_for(o, @query).new(@presenter, self) }.sort_by{|a| a.order}
+        @outputs ||= enabled_outputs.map{|o| TesRedmineExtensions::QueryOutput.output_klass_for(o, @query).new(@presenter, self) }.sort_by{|a| a.order}
       end
 
       def each(style = :enabled, &block)
@@ -42,11 +42,11 @@ module RedmineExtensions
       end
 
       def available_output_names
-        @available_output_names ||= RedmineExtensions::QueryOutput.available_outputs_for( @query )
+        @available_output_names ||= TesRedmineExtensions::QueryOutput.available_outputs_for( @query )
       end
 
       def available_outputs
-        @available_outputs ||= RedmineExtensions::QueryOutput.available_output_klasses_for( @query ).map{|klass| klass.new(@presenter, self) }
+        @available_outputs ||= TesRedmineExtensions::QueryOutput.available_output_klasses_for( @query ).map{|klass| klass.new(@presenter, self) }
       end
 
       def output_enabled?(output)
@@ -94,4 +94,4 @@ module RedmineExtensions
     end
 
   end #EasyQueryHelpers
-end #RedmineExtensions
+end #TesRedmineExtensions

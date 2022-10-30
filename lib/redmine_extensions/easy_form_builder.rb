@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   class EasyFormBuilder < ActionView::Helpers::FormBuilder
 
   end

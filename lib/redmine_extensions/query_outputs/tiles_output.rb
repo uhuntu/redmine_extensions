@@ -1,6 +1,6 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module QueryOutputs
-    class TilesOutput < RedmineExtensions::QueryOutput
+    class TilesOutput < TesRedmineExtensions::QueryOutput
 
       def self.key
         'tiles'

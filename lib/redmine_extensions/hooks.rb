@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   class Hooks < Redmine::Hook::ViewListener
 
     if defined?(EasyExtensions)

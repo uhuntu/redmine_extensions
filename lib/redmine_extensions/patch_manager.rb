@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
 
   class PatchManager
 
@@ -397,9 +397,9 @@ module RedmineExtensions
       def easy_constantize(name)
         name.constantize
       rescue NameError
-        if RedmineExtensions::PatchManager.patches_locations.has_key?(name)
-          RedmineExtensions::PatchManager.with_reloading_code do
-            load RedmineExtensions::PatchManager.patches_locations[patching_module]
+        if TesRedmineExtensions::PatchManager.patches_locations.has_key?(name)
+          TesRedmineExtensions::PatchManager.with_reloading_code do
+            load TesRedmineExtensions::PatchManager.patches_locations[patching_module]
           end
 
           name.constantize
@@ -432,9 +432,9 @@ module RedmineExtensions
 end
 
 ActiveSupport.on_load(:easyproject, yield: true) do
-  RedmineExtensions::PatchManager.apply_persisting_patches
+  TesRedmineExtensions::PatchManager.apply_persisting_patches
 end
 
-RedmineExtensions::Reloader.to_prepare do
-  RedmineExtensions::PatchManager.apply_reloadable_patches
+TesRedmineExtensions::Reloader.to_prepare do
+  TesRedmineExtensions::PatchManager.apply_reloadable_patches
 end

@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   if Rails::VERSION::MAJOR >= 5
     class Migration < ActiveRecord::Migration[4.2]
     end

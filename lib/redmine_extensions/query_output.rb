@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   class QueryOutput
 
     attr_accessor :query
@@ -151,4 +151,4 @@ module RedmineExtensions
   end
 end
 # alias for convinience
-# EasyQueryOutput = RedmineExtensions::QueryOutput
+# EasyQueryOutput = TesRedmineExtensions::QueryOutput

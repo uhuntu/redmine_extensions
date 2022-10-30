@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module HTMLFormatting
     class Formatter < String
       include ActionView::Helpers::TagHelper

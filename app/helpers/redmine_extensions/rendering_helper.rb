@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module RenderingHelper
 
     def render_with_fallback(*attrs)
@@ -22,8 +22,8 @@ module RedmineExtensions
     end
 
     def query_outputs(presenter_or_query, options={})
-      presenter = present(presenter_or_query, options) rescue RedmineExtensions::BasePresenter.new(presenter_or_query, self, options)
-      RedmineExtensions::EasyQueryHelpers::Outputs.new(presenter, self)
+      presenter = present(presenter_or_query, options) rescue TesRedmineExtensions::BasePresenter.new(presenter_or_query, self, options)
+      TesRedmineExtensions::EasyQueryHelpers::Outputs.new(presenter, self)
     end
   end
 end

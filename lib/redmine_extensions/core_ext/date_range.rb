@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   class DateRange < Hash
 
     def self.first_wday

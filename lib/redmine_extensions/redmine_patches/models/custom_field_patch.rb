@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module CustomFieldPatch
 
     def translated_name
@@ -8,4 +8,4 @@ module RedmineExtensions
   end
 end
 
-RedmineExtensions::PatchManager.register_model_patch 'CustomField', 'RedmineExtensions::CustomFieldPatch', if: -> { !Redmine::Plugin.installed?(:easy_extensions) }
+TesRedmineExtensions::PatchManager.register_model_patch 'CustomField', 'TesRedmineExtensions::CustomFieldPatch', if: -> { !Redmine::Plugin.installed?(:easy_extensions) }

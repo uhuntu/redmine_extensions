@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module ProjectPatch
     def self.included(base)
       base.class_eval do
@@ -7,4 +7,4 @@ module RedmineExtensions
     end
   end
 end
-RedmineExtensions::PatchManager.register_model_patch 'Project', 'RedmineExtensions::ProjectPatch'
+TesRedmineExtensions::PatchManager.register_model_patch 'Project', 'TesRedmineExtensions::ProjectPatch'

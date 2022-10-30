@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module ApplicationControllerPatch
 
     def self.included(base)
@@ -62,4 +62,4 @@ module RedmineExtensions
 
   end
 end
-RedmineExtensions::PatchManager.register_controller_patch 'ApplicationController', 'RedmineExtensions::ApplicationControllerPatch'
+TesRedmineExtensions::PatchManager.register_controller_patch 'ApplicationController', 'TesRedmineExtensions::ApplicationControllerPatch'

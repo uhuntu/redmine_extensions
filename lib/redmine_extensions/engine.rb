@@ -6,7 +6,7 @@ require_relative './redmine_patches/models/custom_field_patch'
 
 require_relative './query_output'
 
-module RedmineExtensions
+module TesRedmineExtensions
   class Engine < ::Rails::Engine
     config.generators do |g|
       g.test_framework      :rspec,        fixture: false
@@ -26,14 +26,14 @@ module RedmineExtensions
     end
 
     # config.to_prepare goes after Reloader.to_prepare
-    RedmineExtensions::Reloader.to_prepare do
-      RedmineExtensions::QueryOutput.register_output RedmineExtensions::QueryOutputs::ListOutput
-      RedmineExtensions::QueryOutput.register_output RedmineExtensions::QueryOutputs::TilesOutput
-      ApplicationController.include RedmineExtensions::RenderingHelper
+    TesRedmineExtensions::Reloader.to_prepare do
+      TesRedmineExtensions::QueryOutput.register_output TesRedmineExtensions::QueryOutputs::ListOutput
+      TesRedmineExtensions::QueryOutput.register_output TesRedmineExtensions::QueryOutputs::TilesOutput
+      ApplicationController.include TesRedmineExtensions::RenderingHelper
     end
 
     initializer 'tes_redmine_extensions.initialize' do |_app|
-      ActionDispatch::Routing::RouteSet::Generator.prepend RedmineExtensions::RailsPatches::RouteSetGeneratorPatch
+      ActionDispatch::Routing::RouteSet::Generator.prepend TesRedmineExtensions::RailsPatches::RouteSetGeneratorPatch
     end
 
     initializer 'tes_redmine_extensions.append_migrations' do |app|
@@ -55,14 +55,14 @@ module RedmineExtensions
     # include helpers
     initializer 'tes_redmine_extensions.rails_patching', before: :load_config_initializers do |_app|
       ActiveSupport.on_load(Rails::VERSION::MAJOR >= 5 ? :action_controller_base : :action_controller) do
-        helper RedmineExtensions::ApplicationHelper
-        # helper RedmineExtensions::EasyQueryHelper
+        helper TesRedmineExtensions::ApplicationHelper
+        # helper TesRedmineExtensions::EasyQueryHelper
       end
       ActiveSupport.on_load(:active_record) do
-        include RedmineExtensions::RailsPatches::ActiveRecord
+        include TesRedmineExtensions::RailsPatches::ActiveRecord
       end
       ActiveSupport.on_load(:action_view) do
-        default_form_builder.include RedmineExtensions::RailsPatches::FormBuilderPatch
+        default_form_builder.include TesRedmineExtensions::RailsPatches::FormBuilderPatch
       end
     end
 

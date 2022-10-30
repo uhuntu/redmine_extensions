@@ -1,6 +1,6 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module QueryOutputs
-    class ListOutput < RedmineExtensions::QueryOutput
+    class ListOutput < TesRedmineExtensions::QueryOutput
 
       def self.key
         'list'

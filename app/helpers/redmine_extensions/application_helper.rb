@@ -1,4 +1,4 @@
-module RedmineExtensions
+module TesRedmineExtensions
   module ApplicationHelper
     include RenderingHelper
 
@@ -15,10 +15,10 @@ module RedmineExtensions
     # -------= Rendering and presenting methods =-------
 
     def present(model, options = {}, &block)
-      if model.is_a?(RedmineExtensions::BasePresenter)
+      if model.is_a?(TesRedmineExtensions::BasePresenter)
         presenter = model.update_options(options.merge(view_context: self))
       else
-        presenter = RedmineExtensions::BasePresenter.present(model, self, options)
+        presenter = TesRedmineExtensions::BasePresenter.present(model, self, options)
       end
       if block
         yield presenter

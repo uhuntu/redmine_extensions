@@ -1,4 +1,4 @@
-class EasyQueryAdapterPresenter < RedmineExtensions::BasePresenter
+class EasyQueryAdapterPresenter < TesRedmineExtensions::BasePresenter
 
   # --- GETTERS ---
   attr_accessor :page_module, :row_limit
@@ -30,7 +30,7 @@ class EasyQueryAdapterPresenter < RedmineExtensions::BasePresenter
   end
 
   def outputs
-    @outputs ||= RedmineExtensions::EasyQueryHelpers::Outputs.new(self)
+    @outputs ||= TesRedmineExtensions::EasyQueryHelpers::Outputs.new(self)
   end
 
   # ----- RENDERING HELPERS ----
