@@ -2,8 +2,8 @@ require 'rails/generators'
 
 module PluginGenerator
   def self.generate_test_plugin!
-    Rails::Generators.invoke 'redmine_extensions:plugin', ['DummyPlugin'], behavior: :revoke, destination_root: Rails.root
-    Rails::Generators.invoke 'redmine_extensions:plugin', ['DummyPlugin'], behavior: :invoke, destination_root: Rails.root
+    Rails::Generators.invoke 'tes_redmine_extensions:plugin', ['DummyPlugin'], behavior: :revoke, destination_root: Rails.root
+    Rails::Generators.invoke 'tes_redmine_extensions:plugin', ['DummyPlugin'], behavior: :invoke, destination_root: Rails.root
     generate_autocomplete!
   end
 

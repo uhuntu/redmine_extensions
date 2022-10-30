@@ -18,10 +18,10 @@ module RedmineExtensions
     config.autoload_paths << config.root.join('lib')
     config.eager_load_paths << config.root.join('app', 'models', 'easy_queries')
 
-    initializer 'redmine_extensions.assets' do
+    initializer 'tes_redmine_extensions.assets' do
       if config.respond_to?(:assets)
-        config.assets.precompile << 'redmine_extensions/applications.js'
-        config.assets.precompile << 'redmine_extensions/blocking.js'
+        config.assets.precompile << 'tes_redmine_extensions/applications.js'
+        config.assets.precompile << 'tes_redmine_extensions/blocking.js'
       end
     end
 
@@ -32,28 +32,28 @@ module RedmineExtensions
       ApplicationController.include RedmineExtensions::RenderingHelper
     end
 
-    initializer 'redmine_extensions.initialize' do |_app|
+    initializer 'tes_redmine_extensions.initialize' do |_app|
       ActionDispatch::Routing::RouteSet::Generator.prepend RedmineExtensions::RailsPatches::RouteSetGeneratorPatch
     end
 
-    initializer 'redmine_extensions.append_migrations' do |app|
+    initializer 'tes_redmine_extensions.append_migrations' do |app|
       unless app.root.to_s.match root.to_s
         config.paths['db/migrate'].expanded.each do |expanded_path|
           app.config.paths['db/migrate'] << expanded_path
         end
       end
       if true
-        js_dir = app.root.join('public', 'javascripts', 'redmine_extensions')
+        js_dir = app.root.join('public', 'javascripts', 'tes_redmine_extensions')
         FileUtils.mkdir(js_dir) unless File.directory?(js_dir)
-        Dir.glob(root.join('app', 'assets', 'javascripts', 'redmine_extensions', '*.js')) do |js_file|
-          FileUtils.cp(js_file, app.root.join('public', 'javascripts', 'redmine_extensions'))
+        Dir.glob(root.join('app', 'assets', 'javascripts', 'tes_redmine_extensions', '*.js')) do |js_file|
+          FileUtils.cp(js_file, app.root.join('public', 'javascripts', 'tes_redmine_extensions'))
         rescue StandardError
         end
       end
     end
 
     # include helpers
-    initializer 'redmine_extensions.rails_patching', before: :load_config_initializers do |_app|
+    initializer 'tes_redmine_extensions.rails_patching', before: :load_config_initializers do |_app|
       ActiveSupport.on_load(Rails::VERSION::MAJOR >= 5 ? :action_controller_base : :action_controller) do
         helper RedmineExtensions::ApplicationHelper
         # helper RedmineExtensions::EasyQueryHelper
@@ -66,7 +66,7 @@ module RedmineExtensions
       end
     end
 
-    initializer 'redmine_extensions.initialize_easy_plugins', after: :load_config_initializers do
+    initializer 'tes_redmine_extensions.initialize_easy_plugins', after: :load_config_initializers do
       require_relative './hooks'
 
       ActiveSupport.run_load_hooks(:easyproject, self) unless Redmine::Plugin.installed?(:easy_extensions)

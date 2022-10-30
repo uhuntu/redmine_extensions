@@ -44,7 +44,7 @@ module RedmineExtensions
 
       def heads_for_wiki_formatter
         unless @heads_for_wiki_formatter_included
-          header = javascript_include_tag('redmine_extensions/ckeditor/ckeditor')
+          header = javascript_include_tag('tes_redmine_extensions/ckeditor/ckeditor')
 
           # Syntax higlight
           if EasySetting.value('ckeditor_syntax_highlight_enabled')

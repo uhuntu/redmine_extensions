@@ -5,9 +5,9 @@ Description:
     You can use --easy_plugin flag to specify easy plugin build.
 
 Example:
-    rails g redmine_extensions:plugin NameOfNewPlugin
+    rails g tes_redmine_extensions:plugin NameOfNewPlugin
       create  plugins/name_of_new_plugin/app/controllers
       ...
 
 Help:
-     rails g redmine_extensions:plugin --help
+     rails g tes_redmine_extensions:plugin --help

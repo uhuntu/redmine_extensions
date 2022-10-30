@@ -68,7 +68,7 @@ module RedmineExtensions
       template 'issues_helper_patch.example.erb', "#{plugin_path}/lib/#{plugin_name_underscored}/easy_patch/redmine/helpers/issues_helper_patch.example"
     end
 
-    hook_for :entity, as: :entity, in: :redmine_extensions, type: :boolean
+    hook_for :entity, as: :entity, in: :tes_redmine_extensions, type: :boolean
 
   end
 end

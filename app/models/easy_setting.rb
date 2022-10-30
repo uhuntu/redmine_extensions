@@ -1,4 +1,4 @@
-require 'redmine_extensions/easy_settings'
+require 'tes_redmine_extensions/easy_settings'
 
 ##
 # EasySetting

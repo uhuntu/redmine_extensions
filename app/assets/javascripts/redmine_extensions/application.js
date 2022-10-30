@@ -13,4 +13,4 @@
 //= require ./easy_togglers
 //= require ./jquery.entityarray
 //= require ./render_polyfill
-//= require ./redmine_extensions
+//= require ./tes_redmine_extensions

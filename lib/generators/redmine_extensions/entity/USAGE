@@ -3,9 +3,9 @@ Description:
     New entity is prepared for use in Redmine and Easy Redmine as well.
 
 Example:
-    rails g redmine_extensions:entity NameOfNewPlugin Post
+    rails g tes_redmine_extensions:entity NameOfNewPlugin Post
       create  plugins/name_of_new_plugin/app/controllers
       ...
 
 Help:
-    rails g redmine_extensions:entity --help
+    rails g tes_redmine_extensions:entity --help
