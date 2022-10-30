@@ -16,10 +16,10 @@ load 'rails/tasks/statistics.rake'
 
 Bundler::GemHelper.install_tasks
 
-namespace :redmine_extensions do
+namespace :tes_redmine_extensions do
   task :generate_test_plugin do
     require_relative 'spec/init_rails'
-    require RedmineExtensions::Engine.root.join('spec', 'support', 'plugin_generator').to_s
+    require TesRedmineExtensions::Engine.root.join('spec', 'support', 'plugin_generator').to_s
     PluginGenerator.generate_test_plugin!
   end
 end
