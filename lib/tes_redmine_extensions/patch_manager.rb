@@ -376,7 +376,6 @@ module TesRedmineExtensions
         return if (cond = @options[:if]) && cond.respond_to?(:call) && !cond.call
 
         pm_klass = easy_constantize(patching_module)
-        # pm_klass.class_eval { unloadable }
 
         oktp_klass = easy_constantize(original_klass_to_patch)
 
