@@ -1,25 +1,6 @@
 module TesRedmineExtensions
-  class Hooks < Redmine::Hook::ViewListener
-
-    if defined?(EasyExtensions)
-      if EasyExtensions.try(:deferred_js)
-
-        ### DEFERRED JAVASCRIPTS ###
-        def easy_extensions_blocking_javascripts_hook(context = {})
-          context[:template].require_asset('tes_redmine_extensions/blocking')
-        end
-
-        def easy_extensions_javascripts_hook(context = {})
-          context[:template].require_asset('tes_redmine_extensions/application')
-        end
-      else
-        ### JAVASCRIPTS IN HEADER ###
-        def easy_extensions_javascripts_hook(context = {})
-          context[:template].require_asset('tes_redmine_extensions/blocking')
-          context[:template].require_asset('tes_redmine_extensions/application')
-        end
-      end
-    else
+  module Hooks
+    class ViewsLayoutsHook < Redmine::Hook::ViewListener
       ### JAVASCRIPTS IN REDMINE ###
       def view_layouts_base_html_head(context = {})
         ## BLOCKING ##
@@ -38,6 +19,5 @@ module TesRedmineExtensions
           javascript_include_tag('tes_redmine_extensions/tes_redmine_extensions')
       end
     end
-
   end
 end

@@ -56,7 +56,6 @@ module TesRedmineExtensions
     initializer 'tes_redmine_extensions.rails_patching', before: :load_config_initializers do |_app|
       ActiveSupport.on_load(Rails::VERSION::MAJOR >= 5 ? :action_controller_base : :action_controller) do
         helper TesRedmineExtensions::ApplicationHelper
-        # helper TesRedmineExtensions::EasyQueryHelper
       end
       ActiveSupport.on_load(:active_record) do
         include TesRedmineExtensions::RailsPatches::ActiveRecord
@@ -67,7 +66,7 @@ module TesRedmineExtensions
     end
 
     initializer 'tes_redmine_extensions.initialize_easy_plugins', after: :load_config_initializers do
-      require_relative './hooks'
+      require 'tes_redmine_extensions/hooks/views_layouts_hook'
 
       ActiveSupport.run_load_hooks(:easyproject, self) unless Redmine::Plugin.installed?(:easy_extensions)
 
