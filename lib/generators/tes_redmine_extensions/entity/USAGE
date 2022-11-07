@@ -1,0 +1,11 @@
+Description:
+    The entity generator creates new entity for Redmine plugin.
+    New entity is prepared for use in Redmine and Easy Redmine as well.
+
+Example:
+    rails g tes_redmine_extensions:entity NameOfNewPlugin Post
+      create  plugins/name_of_new_plugin/app/controllers
+      ...
+
+Help:
+    rails g tes_redmine_extensions:entity --help

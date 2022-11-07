@@ -1,0 +1,143 @@
+class <%= model_name %> < ActiveRecord::Base
+  include Redmine::SafeAttributes
+
+  <%= 'belongs_to :project' if project? %>
+  <%= 'belongs_to :author, class_name: \'User\'' if author? %>
+
+  scope :visible, ->(*args) { where(<%= model_name %>.visible_condition(args.shift || User.current, *args))<%= '.joins(:project)' if project? %> }
+  <% if name_column? %>
+  scope :sorted, -> { order("#{table_name}.<%= name_column %> ASC") }
+  <% end %>
+
+  <%- if acts_as_searchable? -%>
+  acts_as_searchable columns: [<%= string_columns.collect{|c, _| "\"\#{#{model_name}.table_name}.#{c}\"" }.join(', ') %>],
+                     date_column: :created_at
+  <%- end -%>
+  <%- if acts_as_customizable? -%>
+  acts_as_customizable
+  <%- end -%>
+  <%- if acts_as_attachable? -%>
+  acts_as_attachable
+  <%- end -%>
+  <%- if acts_as_event? -%>
+  acts_as_event title: ->(o){"#{l(:label_<%= model_name_underscored %>)} - #{o.to_s}"},
+    url: ->(o){{controller: '<%= model_name_pluralize_underscored %>', action: 'show', id: o, project_id: o.project}},
+    datetime: :created_at, description: :<%= description_column || name_column %>
+  <%- end -%>
+  <%- if acts_as_activity_provider? -%>
+  acts_as_activity_provider author_key: <%= author? ? ':author_id' : 'nil' %>, timestamp: "#{table_name}.created_at"
+  <%- end -%>
+  <%- if acts_as_watchable? -%>
+  acts_as_watchable
+  <%- end -%>
+
+  <%= 'validates :project_id, presence: true' if project? %>
+  <%= 'validates :author_id, presence: true' if author? %>
+  <%= "validates :#{safe_columns.keys.first}, presence: true" if safe_columns.any? %>
+
+  <%- if associations.any? -%>
+  <%- associations.each do |assoc_name, values| -%>
+  <%- options = ''-%>
+  <%- options = ", class_name: '#{values[:class]}'" if values[:class].present? -%>
+  <%= values[:type] %> :<%= assoc_name %><%= options %>
+  <%- end -%>
+  <%- end -%>
+  <%- attributes = [] -%>
+  <%- attributes += safe_columns.keys if safe_columns.any? -%>
+  <%- attributes += ['custom_field_values', 'custom_fields'] if acts_as_customizable? -%>
+  <%-attributes += associations.keys.map{ |assoc| "#{assoc}_id" } -%>
+  safe_attributes *%w[<%= attributes.join(' ') %>]
+  <%- if project? -%>
+  safe_attributes 'project_id', if: ->(<%= model_name_underscored %>, _user) { <%= model_name_underscored %>.new_record? }
+  <%- end -%>
+
+  <%- if mail? -%>
+  after_create :send_create_notification
+  after_update :send_update_notification
+  <%- end -%>
+
+  def self.visible_condition(user, options = {})
+  <%- if project? -%>
+    Project.allowed_to_condition(user, :<%= view_permission %>, options)
+  <%- else -%>
+    '1=1'
+  <%- end -%>
+  end
+
+  def self.css_icon
+    'icon icon-user'
+  end
+
+  def editable_by?(user)
+    editable?(user)
+  end
+
+  <%- if !project? -%>
+  def project
+    nil
+  end
+  <%- end -%>
+
+  def visible?(user = nil)
+    user ||= User.current
+    user.allowed_to?(:<%= view_permission %>, project, global: true)
+  end
+
+  def editable?(user = nil)
+    user ||= User.current
+    user.allowed_to?(:<%= edit_permission %>, project, global: true)
+  end
+
+  def deletable?(user = nil)
+    user ||= User.current
+    user.allowed_to?(:<%= delete_permission %>, project, global: true)
+  end
+
+  def attachments_visible?(user = nil)
+    visible?(user)
+  end
+
+  def attachments_editable?(user = nil)
+    editable?(user)
+  end
+
+  def attachments_deletable?(user = nil)
+    deletable?(user)
+  end
+
+  <%- if name_column? -%>
+  def to_s
+    <%= name_column %>.to_s
+  end
+  <%- end -%>
+
+  alias_attribute :created_on, :created_at
+  alias_attribute :updated_on, :updated_at
+
+  <%- if mail? -%>
+  def notified_users
+    if project
+      project.notified_users.reject {|user| !visible?(user)}
+    else
+      [User.current]
+    end
+  end
+
+  def send_create_notification
+    # if Setting.notified_events.include?('<%= model_name_underscored %>_added')
+    notified_users.each do |user|
+      <%= model_name %>Mailer.<%= model_name_underscored %>_added(user, self).deliver
+    end
+    # end
+  end
+
+  def send_update_notification
+    # if Setting.notified_events.include?('<%= model_name_underscored %>_updated')
+    notified_users.each do |user|
+      <%= model_name %>Mailer.<%= model_name_underscored %>_updated(user, self).deliver
+    end
+    # end
+  end
+  <%- end -%>
+
+end

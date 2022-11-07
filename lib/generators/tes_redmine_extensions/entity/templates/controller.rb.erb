@@ -1,0 +1,208 @@
+class <%= controller_class %>Controller < ApplicationController
+
+  menu_item :<%= model_name_pluralize_underscored %>
+
+  before_action :authorize_global
+  before_action :find_<%= model_name_underscored %>, only: [:show, :edit, :update]
+  before_action :find_<%= model_name_pluralize_underscored %>, only: [:context_menu, :bulk_edit, :bulk_update, :destroy]
+  <%- if project? -%>
+  before_action :find_project
+  <%- end -%>
+
+  helper :<%= model_name_pluralize_underscored %>
+  helper :custom_fields, :context_menus, :attachments, :issues
+  include_query_helpers
+
+  accept_api_auth :index, :show, :create, :update, :destroy
+
+  def index
+    <%- if Redmine::Plugin.installed?(:easy_extensions) %>
+    index_for_easy_query(<%= model_name %>Query)
+    <% else %>
+    retrieve_query(<%= model_name %>Query)
+    @entity_count = @query.<%= model_name_pluralize_underscored %>.count
+    @entity_pages = Paginator.new @entity_count, per_page_option, params['page']
+    @entities = @query.<%= model_name_pluralize_underscored %>(offset: @entity_pages.offset, limit: @entity_pages.per_page)
+    <%- end %>
+  end
+
+  def show
+    respond_to do |format|
+      format.html
+      format.api
+      format.js
+    end
+  end
+
+  def new
+    @<%= model_name_underscored %> = <%= model_name %>.new
+    <%- if project? -%>
+    @<%= model_name_underscored %>.project = @project
+    <%- end -%>
+    @<%= model_name_underscored %>.safe_attributes = params[:<%= model_name_underscored %>]
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
+  def create
+    @<%= model_name_underscored %> = <%= model_name %>.new <%= "author: User.current" if author? %>
+    <%- if project? -%>
+    @<%= model_name_underscored %>.project = @project
+    <%- end -%>
+    @<%= model_name_underscored %>.safe_attributes = params[:<%= model_name_underscored %>]
+    <%- if acts_as_attachable? -%>
+    @<%= model_name_underscored %>.save_attachments(params[:attachments] || (params[:<%= model_name_underscored %>] && params[:<%= model_name_underscored %>][:uploads]))
+    <%- end -%>
+
+    respond_to do |format|
+      if @<%= model_name_underscored %>.save
+        format.html do
+          flash[:notice] = l(:notice_successful_create)
+          redirect_back_or_default <%= model_name_underscored %>_path(@<%= model_name_underscored %>)
+        end
+        format.api { render action: 'show', status: :created, location: <%= model_name_underscored %>_url(@<%= model_name_underscored %>) }
+        format.js { render template: 'common/close_modal' }
+      else
+        format.html { render action: 'new' }
+        format.api { render_validation_errors(@<%= model_name_underscored %>) }
+        format.js { render action: 'new' }
+      end
+    end
+  end
+
+  def edit
+    @<%= model_name_underscored %>.safe_attributes = params[:<%= model_name_underscored %>]
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
+  def update
+    @<%= model_name_underscored %>.safe_attributes = params[:<%= model_name_underscored %>]
+    <%- if acts_as_attachable? -%>
+    @<%= model_name_underscored %>.save_attachments(params[:attachments] || (params[:<%= model_name_underscored %>] && params[:<%= model_name_underscored %>][:uploads]))
+    <%- end -%>
+
+    respond_to do |format|
+      if @<%= model_name_underscored %>.save
+        format.html do
+          flash[:notice] = l(:notice_successful_update)
+          redirect_back_or_default <%= model_name_underscored %>_path(@<%= model_name_underscored %>)
+        end
+        format.api { render_api_ok }
+        format.js { render template: 'common/close_modal' }
+      else
+        format.html { render action: 'edit' }
+        format.api { render_validation_errors(@<%= model_name_underscored %>) }
+        format.js { render action: 'edit' }
+      end
+    end
+  end
+
+  def destroy
+    @<%= model_name_pluralize_underscored %>.each(&:destroy)
+
+    respond_to do |format|
+      format.html do
+        flash[:notice] = l(:notice_successful_delete)
+        redirect_back_or_default <%= model_name_pluralize_underscored %>_path
+      end
+      format.api { render_api_ok }
+    end
+  end
+
+  def bulk_edit
+  end
+
+  def bulk_update
+    unsaved, saved = [], []
+    attributes = parse_params_for_bulk_update(params[:<%= model_name_underscored %>])
+    @<%= model_name_pluralize_underscored %>.each do |entity|
+      entity.init_journal(User.current) if entity.respond_to? :init_journal
+      entity.safe_attributes = attributes
+      if entity.save
+        saved << entity
+      else
+        unsaved << entity
+      end
+    end
+    respond_to do |format|
+      format.html do
+        if unsaved.blank?
+          flash[:notice] = l(:notice_successful_update)
+        else
+          flash[:error] = unsaved.map{|i| i.errors.full_messages}.flatten.uniq.join(",\n")
+        end
+        redirect_back_or_default :index
+      end
+    end
+  end
+
+  def context_menu
+    if @<%= model_name_pluralize_underscored %>.size == 1
+      @<%= model_name_underscored %> = @<%= model_name_pluralize_underscored %>.first
+    end
+
+    can_edit = @<%= model_name_pluralize_underscored %>.detect{|c| !c.editable?}.nil?
+    can_delete = @<%= model_name_pluralize_underscored %>.detect{|c| !c.deletable?}.nil?
+    @can = {edit: can_edit, delete: can_delete}
+    @back = back_url
+
+    @<%= model_name_underscored %>_ids, @safe_attributes, @selected = [], [], {}
+    @<%= model_name_pluralize_underscored %>.each do |e|
+      @<%= model_name_underscored %>_ids << e.id
+      @safe_attributes.concat e.safe_attribute_names
+      attributes = e.safe_attribute_names - (%w(custom_field_values custom_fields))
+      attributes.each do |c|
+        column_name = c.to_sym
+        if @selected.key? column_name
+          @selected[column_name] = nil if @selected[column_name] != e.send(column_name)
+        else
+          @selected[column_name] = e.send(column_name)
+        end
+      end
+    end
+
+    @safe_attributes.uniq!
+
+    render layout: false
+  end
+
+  def autocomplete
+  end
+
+  private
+
+  def find_<%= model_name_underscored %>
+    @<%= model_name_underscored %> = <%= model_name %>.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
+  def find_<%= model_name_pluralize_underscored %>
+    @<%= model_name_pluralize_underscored %> = <%= model_name %>.visible.where(id: (params[:id] || params[:ids])).to_a
+    @<%= model_name_underscored %> = @<%= model_name_pluralize_underscored %>.first if @<%= model_name_pluralize_underscored %>.count == 1
+    raise ActiveRecord::RecordNotFound if @<%= model_name_pluralize_underscored %>.empty?
+    raise Unauthorized unless @<%= model_name_pluralize_underscored %>.all?(&:visible?)
+
+    @projects = @<%= model_name_pluralize_underscored %>.collect(&:project).compact.uniq
+    @project = @projects.first if @projects.size == 1
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
+  <%- if project? -%>
+  def find_project
+    @project ||= @<%= model_name_underscored %>.project if @<%= model_name_underscored %>
+    @project ||= Project.find(params[:project_id]) if params[:project_id].present?
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+  <%- end -%>
+
+end
