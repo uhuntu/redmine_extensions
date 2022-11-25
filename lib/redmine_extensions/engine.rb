@@ -29,8 +29,6 @@ module RedmineExtensions
     RedmineExtensions::Reloader.to_prepare do
       RedmineExtensions::QueryOutput.register_output RedmineExtensions::QueryOutputs::ListOutput
       RedmineExtensions::QueryOutput.register_output RedmineExtensions::QueryOutputs::TilesOutput
-      # RedmineExtensions::BasePresenter.register 'RedmineExtensions::EasyQueryPresenter', 'EasyQuery'
-      # ApplicationController.send :include, RedmineExtensions::RailsPatches::ControllerQueryHelpers
       ApplicationController.include RedmineExtensions::RenderingHelper
     end
 
