@@ -1,5 +1,5 @@
 require "redmine_extensions/version"
-require "redmine_extensions/railtie"
+require "redmine_extensions/engine"
 
 module RedmineExtensions
   # Your code goes here...
