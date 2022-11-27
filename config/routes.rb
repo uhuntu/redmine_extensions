@@ -1,2 +1,2 @@
-Rails.application.routes.draw do
+RedmineExtensions::Engine.routes.draw do
 end
