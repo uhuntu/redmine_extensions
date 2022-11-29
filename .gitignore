@@ -10,3 +10,4 @@
 /test/dummy/tmp/
 
 /test/dummy/config/master.key
+Gemfile.lock
